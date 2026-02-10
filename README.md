@@ -47,6 +47,23 @@ This repo accompanies the course published on Substack, where each module is exp
   </a>
 </p>
 
+## Getting started
+1- Create a virtual environment and install the project dependencies
+```bash
+uv pip install -e .
+```
+2- Create a `.env` file by coping the `.env_example` file and add the necessary API keys
+
+3- Setup Opik for monitoring 
+```bash
+opik configure
+```
+You will need to login and get the API key from your account
+4- Run your agent 
+```
+python run.py
+```
+
 ## Course Outline
 This **open-source series consists of 8 modules**. This course is still under-development, thus more modules can be added. 
 
