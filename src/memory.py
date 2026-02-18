@@ -4,6 +4,7 @@ from typing import Optional
 from mem0 import MemoryClient
 
 from src.config import config
+from src.prompts import MEMORY_CUSTOM_INSTRUCTIONS
 
 
 def generate_thread_id(user_id: str, now: Optional[float] = None) -> str:
@@ -23,7 +24,9 @@ def get_episodic_memory():
         org_id=config.MEM0_ORG_ID,
         project_id=config.MEM0_PROJECT_ID,
     )
+    client.project.update(custom_instructions=MEMORY_CUSTOM_INSTRUCTIONS)
     return client
 
 
+long_term_memory = get_episodic_memory()
 long_term_memory = get_episodic_memory()
