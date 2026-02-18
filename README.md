@@ -72,7 +72,7 @@ This **open-source series consists of 8 modules**. This course is still under-de
 | Module | Substack | Description | Running the code |
 |--------|-----------|-------------|------------------|
 0 | [Introduction](https://fastbatch.substack.com/p/lets-build-a-smart-home-agent-together)| Series announcement | - |
-1 | [Build your smart home agent]() | Implement a simple agent that controls devices | - |
+1 | [Build your smart home agent](https://fastbatch.substack.com/p/build-a-smart-home-agent) | Implement a simple agent that controls devices | [Demo](https://github.com/fastbatchai/smart-home-agent/blob/lesson-1/demo.py) |
 2 | [Personnalize your agent]() | Add a memory layer to personnalize your agent's response | -
 3 | [Deploy your agent]() | Design the deployment architecture | -
 4 | [Evaluate your agent]() | Evaluate if your agent if ready for production | -
