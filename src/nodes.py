@@ -63,13 +63,10 @@ def get_response_chain():
 
 async def response_node(state: AgentState):
     conversation_chain = get_response_chain()
+
     response = await conversation_chain.ainvoke(
-        {"messages": state["messages"]},
+        {"current_home_state": state["home_state"], "messages": state["messages"]},
         config={"run_name": "LLM", "tags": ["agent_response"]},
     )
-    # response = await conversation_chain.ainvoke(
-    #     {"current_home_state": state["home_state"], "messages": state["messages"]},
-    #     config={"run_name": "LLM", "tags": ["agent_response"]},
-    # )
 
     return {"messages": response}

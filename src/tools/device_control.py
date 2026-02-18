@@ -36,11 +36,11 @@ async def update_device(
 ) -> Command:
     """
     Updates a device in a room.
-    """
-    # device_name is the name of the device to updated
-    # room_name is the name of the room where the device is updated
-    # new_device_info is the new updated device information. This should follow the same structure as in the home state
 
+    device_name is the name of the device to updated
+    room_name is the name of the room where the device is updated
+    new_device_info is the new updated device information. This should follow the same structure as in the home state
+    """
     room_name = room_name.lower()
     device_name = device_name.lower()
     home_state = state["home_state"]
