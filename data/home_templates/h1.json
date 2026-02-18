@@ -1,0 +1,58 @@
+{
+  "devices": {
+    "kitchen": {
+      "light": {
+        "state": 0,
+        "brightness": 100,
+        "color": "white"
+      }
+    },
+    "dining": {
+      "light": {
+        "state": 0,
+        "brightness": 100,
+        "color": "white"
+      }
+    },
+    "living_room": {
+      "light": {
+        "state": 1,
+        "brightness": 50,
+        "color": "white"
+      },
+      "lamp": {
+        "state": 0,
+        "brightness": 100,
+        "color": "white"
+      }
+    },
+    "bedroom": {
+      "light": {
+        "state": 1,
+        "brightness": 100,
+        "color": "yellow"
+      }
+    },
+    "hall": {
+      "light": {
+        "state": 0,
+        "brightness": 100,
+        "color": "yellow"
+      }
+    },
+    "entry": {
+      "light": {
+        "state": 0,
+        "brightness": 100,
+        "color": "yellow"
+      }
+    },
+    "bath": {
+      "light": {
+        "state": 1,
+        "brightness": 100,
+        "color": "white"
+      }
+    }
+  }
+}
