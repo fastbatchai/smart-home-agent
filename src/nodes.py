@@ -3,6 +3,7 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langgraph.prebuilt import ToolNode
 
 from src.config import config
+from src.memory import long_term_memory
 from src.prompts import AGENT_SYSTEM_PROMPT
 from src.state import AgentState
 from src.tools import all_tools
@@ -61,6 +62,24 @@ def get_response_chain():
     return response
 
 
+def get_interaction(messages, last_response: str):
+    """
+    Get interaction from state message and avoid storing tools outputs
+    NOTE: needs to be tested in a conversational setup
+    """
+    interaction = []
+
+    for message in messages:
+        if message.type == "human":
+            interaction.append({"role": "user", "content": message.content})
+        elif message.type == "ai" and len(message.content) > 0:
+            interaction.append({"role": "assistant", "content": message.content})
+
+    if len(last_response) > 0:
+        interaction.append({"role": "assistant", "content": last_response})
+    return interaction
+
+
 async def response_node(state: AgentState):
     conversation_chain = get_response_chain()
 
@@ -69,4 +88,9 @@ async def response_node(state: AgentState):
         config={"run_name": "LLM", "tags": ["agent_response"]},
     )
 
+    interactions = get_interaction(state["messages"], response.content)
+    if len(interactions) >= 2:
+        long_term_memory.add(interactions, user_id=state["user_id"])
+
+    return {"messages": response}
     return {"messages": response}

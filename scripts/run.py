@@ -1,48 +1,70 @@
 import asyncio
 import json
 import uuid
-from datetime import datetime
 
+from langgraph.checkpoint.redis.aio import AsyncRedisSaver
 from opik.integrations.langchain import OpikTracer
 from rich.console import Console
 
 from src.agent import create_agent_graph
+from src.config import config
+from src.memory import generate_thread_id
 
 # Initialize Rich console
 console = Console()
 
 
 async def main():
-    thread_id = (
-        f"thread-{datetime.now().strftime('%Y%m%d-%H%M%S')}-{uuid.uuid4().hex[:8]}"
-    )
+
     with open("./data/home_templates/h1.json", "r") as f:
         initial_home_state = json.load(f)
         initial_home_state = initial_home_state["devices"]
 
-    command = "The living room is dim"
-
-    # Welcome banner
-    console.print()
-    console.print("[bold cyan]🏠 Smart Home Agent - Single Command Mode[/bold cyan]")
-    # console.print(f"[dim]Thread ID: {thread_id}[/dim]")
-    console.print()
-
-    agent_graph = create_agent_graph().compile()
-    tracer = OpikTracer(
-        project_name="smart-home-agent",
-        graph=agent_graph.get_graph(xray=True),
-    )
-    config = {"callbacks": [tracer], "configurable": {"thread_id": thread_id}}
-    state = {
-        "messages": [command],
-        "home_state": initial_home_state,
+    user_name = "Alice"
+    user_id = f"Alice-{uuid.uuid5(uuid.NAMESPACE_DNS, user_name)}"
+    thread_id = generate_thread_id(user_id=user_id)
+    ttl_config = {
+        "default_ttl": config.SESSION_WINDOW_SECONDS,  # Expire checkpoints after 60 minutes
+        "refresh_on_read": True,  # Reset expiration time when reading checkpoints
     }
 
-    # Print the user command
-    console.print(f"[bold green]You:[/bold green] [green]{command}[/green]\n")
+    command = console.input("[bold green]You:[/bold green] ").strip()
 
-    result = await agent_graph.ainvoke(state, config=config)
+    console.print()
+    console.print("[bold cyan]🏠 Smart Home Agent - Single Command Mode[/bold cyan]")
+    console.print(f"[dim]User: {user_name}[/dim]")
+    console.print(f"[dim]Thread ID: {thread_id}[/dim]")
+    console.print()
+
+    async with AsyncRedisSaver.from_conn_string(
+        config.REDIS_DB_URI, ttl=ttl_config
+    ) as checkpointer:
+        await checkpointer.asetup()
+
+        agent_graph = create_agent_graph().compile(checkpointer=checkpointer)
+        tracer = OpikTracer(
+            project_name="smart-home-agent",
+            graph=agent_graph.get_graph(xray=True),
+        )
+        configuration = {
+            "callbacks": [tracer],
+            "configurable": {
+                "thread_id": thread_id,
+                "user_id": user_id,
+            },
+        }
+        state = {
+            "messages": [command],
+            "home_state": initial_home_state,
+            "user_name": user_name,
+            "user_id": user_id,
+            "thread_id": thread_id,
+        }
+
+        # Print the user command
+        console.print(f"[bold green]You:[/bold green] [green]{command}[/green]\n")
+
+        result = await agent_graph.ainvoke(state, config=configuration)
 
     # Print all messages with colors
     for message in result["messages"][
