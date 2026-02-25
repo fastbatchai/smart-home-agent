@@ -1,0 +1,21 @@
+credentials:
+  usernames:
+    alice:
+      email: alice@example.com
+      name: Alice
+      user_id: alice_001
+      password: $2b$12$1234567890123456789012345678901234567890123456 
+    bob:
+      email: bob@example.com
+      name: Bob
+      user_id: bob_002
+      password: $2b$12$abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwx 
+
+cookie:
+  expiry_days: 30
+  key: smart_home_auth_key_change_this_in_production
+  name: smart_home_cookie
+
+preauthorized:
+  emails:
+    - admin@example.com
