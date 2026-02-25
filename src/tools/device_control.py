@@ -1,10 +1,13 @@
 from copy import deepcopy
 from typing import Annotated, Any
 
+import httpx
 from langchain_core.messages import ToolMessage
 from langchain_core.tools import InjectedToolCallId, tool
 from langgraph.prebuilt import InjectedState
 from langgraph.types import Command
+
+from src.config import config
 
 
 @tool("GetDeviceState")
@@ -58,16 +61,25 @@ async def update_device(
     if set(new_device_info.keys()) != set(home_state[room_name][device_name].keys()):
         return f"The new device info should follow the same structure as {home_state[room_name][device_name]}"
 
+    # call the device service to update
+    async with httpx.AsyncClient() as client:
+        response = await client.put(
+            f"{config.DEVICE_SERVICE_URL}/users/{state['user_name'].lower()}/devices/{room_name}/{device_name}",
+            json={"status": new_device_info},
+        )
+        response.raise_for_status()
+        updated_device = response.json()
+
     new_home_state = deepcopy(home_state)
 
-    new_home_state[room_name][device_name] = new_device_info
+    new_home_state[room_name][device_name] = updated_device["status"]
 
     return Command(
         update={
             "home_state": new_home_state,
             "messages": [
                 ToolMessage(
-                    f"Updated the state of the device {device_name} in the room {room_name} to {new_device_info}",
+                    f"Updated the state of the device {device_name} in the room {room_name} to {updated_device['status']}",
                     tool_call_id=tool_call_id,
                 )
             ],
