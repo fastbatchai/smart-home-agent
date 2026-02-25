@@ -89,9 +89,7 @@ async def main():
                     console.print(
                         f"\n[bold yellow]Tool:[/bold yellow] [yellow]{tool_call['name']}[/yellow]"
                     )
-                    # console.print(
-                    #     f"[dim yellow]{json.dumps(tool_call['args'], indent=2)}[/dim yellow]"
-                    # )
+
             else:
                 # Regular AI message
                 console.print(
