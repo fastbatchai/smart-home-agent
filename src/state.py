@@ -12,6 +12,9 @@ class AgentState(MessagesState):
     """
 
     home_state: dict[str, str]
+    user_name: str
+    user_id: str
+    thread_id: str
 
 
 def state_to_str__(state: AgentState):
@@ -25,5 +28,8 @@ def state_to_str__(state: AgentState):
         conversation = ""
 
     return f"""home state={state["home_state"]},
+user name={state["user_name"]},
+user id={state["user_id"]},
+thread id={state["thread_id"]},
 conversation={conversation})
         """
