@@ -40,6 +40,7 @@ class Config(BaseSettings):
     # Home Configuration          #
     # --------------------------------#
     HOME_TEMPLATE_PATH: str = f"{ROOT_PATH}/data/home_templates/h1.json"
+    DEVICE_SERVICE_URL: str = "http://localhost:8000"
 
 
 config = Config()
