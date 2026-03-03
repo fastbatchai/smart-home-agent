@@ -37,7 +37,7 @@ redis_client = redis.Redis(
 @app.post("/users/{user_id}/devices/initialize")
 async def initialize_user_devices(user_id: str):
     """Initialize devices for a user from JSON template"""
-    print("Initializing devices for user:", os.environ.get("HOME_TEMPLATE_PATH"))
+    logger.debug("Initializing devices for user:", os.environ.get("HOME_TEMPLATE_PATH"))
     try:
         # Load devices from template for simplicity
         with open(os.environ.get("HOME_TEMPLATE_PATH")) as f:

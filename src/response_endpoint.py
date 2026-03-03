@@ -1,10 +1,12 @@
 from typing import Any
+
 import httpx
-from opik.integrations.langchain import OpikTracer
 from langgraph.checkpoint.redis.aio import AsyncRedisSaver
+from opik.integrations.langchain import OpikTracer
 
 from src.agent import create_agent_graph
 from src.config import config
+
 
 async def execute_agent(
     messages: str | list[str] | list[dict[str, Any]],
@@ -15,11 +17,30 @@ async def execute_agent(
 
     # Request the current home state from the device service
     async with httpx.AsyncClient() as client:
-        response = await client.get(f"{config.DEVICE_SERVICE_URL}/users/{user_id}/devices")
-        response.raise_for_status()
-        initial_home_state = response.json()
+        try:
+            response = await client.get(
+                f"{config.DEVICE_SERVICE_URL}/users/{user_id}/devices"
+            )
+            response.raise_for_status()
+            initial_home_state = response.json()
+            print(f"Initial home state: {initial_home_state}")
 
-    print(f"Initial home state: {initial_home_state}")
+        except httpx.HTTPStatusError as e:
+            if e.response.status_code == 404:
+                # User doesn't have devices yet - initialize them
+                print(
+                    f"No devices found for user {user_id}, initializing device state..."
+                )
+                init_response = await client.post(
+                    f"{config.DEVICE_SERVICE_URL}/users/{user_id}/devices/initialize"
+                )
+                init_response.raise_for_status()
+                response = await client.get(
+                    f"{config.DEVICE_SERVICE_URL}/users/{user_id}/devices"
+                )
+                response.raise_for_status()
+                initial_home_state = response.json()
+                print(f"Initialized home state: {initial_home_state}")
 
     ttl_config = {
         "default_ttl": config.SESSION_WINDOW_SECONDS,  # Expire checkpoints after 60 minutes
@@ -29,16 +50,26 @@ async def execute_agent(
     builder = create_agent_graph()
 
     try:
-        async with AsyncRedisSaver.from_conn_string(config.REDIS_DB_URI, ttl=ttl_config) as checkpointer:
+        async with AsyncRedisSaver.from_conn_string(
+            config.REDIS_DB_URI, ttl=ttl_config
+        ) as checkpointer:
             await checkpointer.asetup()
-
 
             agent_graph = builder.compile(checkpointer=checkpointer)
 
             tracer = OpikTracer(graph=agent_graph.get_graph(xray=True))
 
-            configuration = {"configurable": {"user_id": user_id, "thread_id": session_id}, "callbacks": [tracer]}
-            state = {"messages": messages, "home_state":initial_home_state, "user_name": user_name, "user_id": user_id, "thread_id": session_id}
+            configuration = {
+                "configurable": {"user_id": user_id, "thread_id": session_id},
+                "callbacks": [tracer],
+            }
+            state = {
+                "messages": messages,
+                "home_state": initial_home_state,
+                "user_name": user_name,
+                "user_id": user_id,
+                "thread_id": session_id,
+            }
 
             result = await agent_graph.ainvoke(state, config=configuration)
         last_message = result["messages"][-1]
@@ -49,4 +80,3 @@ async def execute_agent(
 
     except Exception as e:
         raise RuntimeError(f"Error running the agent flow: {str(e)}") from e
-
