@@ -1,0 +1,58 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+
+html, body, [class*="css"] { font-family: 'DM Sans', sans-serif; }
+
+.stApp { background-color: #f5f6fa; }
+
+h1 { font-size: 1.6rem !important; font-weight: 600 !important; color: #1a1d2e !important; }
+
+[data-testid="stMetric"] {
+    background: #ffffff; border-radius: 12px;
+    padding: 16px 20px !important; border: 1px solid #e8eaf0;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+}
+[data-testid="stMetricLabel"] {
+    font-size: 0.72rem !important; font-weight: 500 !important;
+    text-transform: uppercase; letter-spacing: 0.6px; color: #8891a8 !important;
+}
+[data-testid="stMetricValue"] {
+    font-size: 1.7rem !important; font-weight: 600 !important; color: #1a1d2e !important;
+}
+
+.device-card {
+    background: #ffffff; border-radius: 10px; padding: 12px 14px;
+    margin-bottom: 8px; border: 1px solid #e8eaf0;
+    display: flex; align-items: center; gap: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+.device-card.on  { border-left: 3px solid #22c55e; }
+.device-card.off { border-left: 3px solid #e2e5ef; }
+
+.device-icon {
+    font-size: 1.3rem; width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 8px; flex-shrink: 0;
+}
+.device-icon.on  { background: #f0fdf4; }
+.device-icon.off { background: #f5f6fa; }
+
+.device-info { flex: 1; min-width: 0; }
+.device-name  { font-size: 0.82rem; font-weight: 600; color: #1a1d2e; }
+.device-status { font-size: 0.73rem; color: #8891a8; font-family: 'DM Mono', monospace; margin-top: 1px; }
+
+.status-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.status-dot.on  { background: #22c55e; box-shadow: 0 0 0 3px #dcfce7; }
+.status-dot.off { background: #cbd5e1; }
+
+.room-header {
+    display: flex; align-items: center; gap: 8px;
+    margin: 18px 0 10px 0; padding-bottom: 8px; border-bottom: 2px solid #e8eaf0;
+}
+.room-header span {
+    font-size: 0.82rem; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.8px; color: #4a5270;
+}
+
+[data-testid="stSidebar"] { background: #1a1d2e !important; }
+[data-testid="stSidebar"] * { color: #c8cde0 !important; }
+hr { border-color: #e8eaf0 !important; }
