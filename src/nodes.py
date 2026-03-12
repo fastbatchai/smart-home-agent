@@ -89,8 +89,7 @@ async def response_node(state: AgentState):
     )
 
     interactions = get_interaction(state["messages"], response.content)
-    if len(interactions) >= 2:
+    if len(interactions) >= 2 and not config.SKIP_MEMORY:
         long_term_memory.add(interactions, user_id=state["user_id"])
 
-    return {"messages": response}
     return {"messages": response}
