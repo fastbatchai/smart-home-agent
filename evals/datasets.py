@@ -201,3 +201,75 @@ agent_completion_datasets = [
     device_resolution_dataset,
     command_chaining_dataset,
 ]
+
+# Memory retrieval dataset
+# Each entry: (command, user_id, home_template, seeded_memories, expected_keywords, tags)
+# - command: what the user says — this is the "input" shown in Opik
+# - user_id: unique per test case to avoid cross-contamination between runs
+# - home_template: home layout to use
+# - seeded_memories: list of facts added to Mem0 before running the agent
+# - expected_keywords: words/phrases that must appear in the retrieved memory context
+memory_retrieval_dataset = [
+    # Temperature preference retrieval
+    (
+        "Set the thermostat to my usual evening temperature",
+        "eval-user-temp-01",
+        "h2",
+        ["Alice prefers the thermostat set to 68°F in the evening"],
+        ["68"],
+        ["memory_retrieval"],
+    ),
+    # Lighting preference retrieval
+    (
+        "Set up the dining room lights the way I like for dinner",
+        "eval-user-light-01",
+        "h1",
+        ["Alice prefers warm white dim lighting for dinner time"],
+        ["warm", "dim"],
+        ["memory_retrieval"],
+    ),
+    # Entertainment preference retrieval
+    (
+        "Put on my usual evening news",
+        "eval-user-tv-01",
+        "h2",
+        ["Alice watches the evening news at 7 PM on Channel 5"],
+        ["news", "Channel 5"],
+        ["memory_retrieval"],
+    ),
+    # Routine retrieval
+    (
+        "Start my bedtime routine",
+        "eval-user-routine-01",
+        "h3",
+        [
+            "Alice's bedtime routine: turn off all lights, set thermostat to 65°F, turn off TV"
+        ],
+        ["lights", "65"],
+        ["memory_retrieval"],
+    ),
+    # Multi-fact retrieval — query should surface multiple stored preferences
+    (
+        "Set up the living room for my morning routine",
+        "eval-user-multi-01",
+        "h3",
+        [
+            "Alice prefers jazz music in the morning",
+            "Alice likes the living room lamp on low brightness in the morning",
+        ],
+        ["jazz", "lamp"],
+        ["memory_retrieval"],
+    ),
+    # Retrieval precision — only the relevant memory should surface, not the irrelevant one
+    (
+        "Set the thermostat to my preferred daytime temperature",
+        "eval-user-precision-01",
+        "h1",
+        [
+            "Alice prefers 72°F during the day",
+            "Alice has a cat named Luna",
+        ],
+        ["72"],
+        ["memory_retrieval"],
+    ),
+]
