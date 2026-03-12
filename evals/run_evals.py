@@ -1,4 +1,5 @@
 import argparse
+
 from opik import Opik
 from tasks import all_tasks
 

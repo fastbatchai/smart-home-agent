@@ -31,17 +31,19 @@ class EvalTask:
     dataset_items: list
     task_fn: callable
     metrics: list
+    experiment_scoring_functions: list | None = None
 
-    def run(self, client: Opik, n_trials: int = 1) -> None:
+    def run(self, client: Opik, n_trials: int = 1):
         dataset = client.get_or_create_dataset(self.dataset_name)
         dataset.insert(self.dataset_items)
         experiment_config = _experiment_config()
         experiment_config["n_trials"] = n_trials
-        evaluate(
+        return evaluate(
             experiment_name=self.experiment_name,
             dataset=dataset,
             task=self.task_fn,
             scoring_metrics=self.metrics,
             trial_count=n_trials,
             experiment_config=experiment_config,
+            experiment_scoring_functions=self.experiment_scoring_functions,
         )

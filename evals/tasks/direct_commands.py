@@ -2,6 +2,7 @@ import json
 
 from datasets import direct_commands_dataset
 from graders.deterministic import DeviceStateCorrectness
+from metrics import make_pass_all_k, make_pass_at_k
 
 from agent import run_agent
 from tasks.base import EvalTask
@@ -44,4 +45,9 @@ task = EvalTask(
     dataset_items=build_items(),
     task_fn=task_fn,
     metrics=[DeviceStateCorrectness()],
+    # @TODO: improve how pass k
+    experiment_scoring_functions=[
+        make_pass_at_k(k=1, metric_name=DeviceStateCorrectness().name),
+        make_pass_all_k(k=2, metric_name=DeviceStateCorrectness().name),
+    ],
 )
