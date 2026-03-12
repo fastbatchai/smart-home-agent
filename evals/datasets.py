@@ -113,6 +113,88 @@ command_chaining_dataset = [
     ),
 ]
 
+tool_selection_dataset = [
+    # Action commands must call UpdateDevice
+    ("h1", "Turn on the kitchen light", ["UpdateDevice"], [], ["tool_selection"]),
+    (
+        "h2",
+        "Turn on the TV and set volume to 20",
+        ["UpdateDevice"],
+        [],
+        ["tool_selection"],
+    ),
+    # Query commands must call GetDeviceState, must NOT call UpdateDevice
+    (
+        "h2",
+        "What is the current thermostat temperature?",
+        [],
+        ["UpdateDevice", "get_user_context"],
+        ["tool_selection"],
+    ),
+    (
+        "h1",
+        "Is the bedroom light on?",
+        [],
+        ["UpdateDevice", "get_user_context"],
+        ["tool_selection"],
+    ),
+    # Personalized/ambiguous commands should trigger get_user_context
+    (
+        "h2",
+        "Set my preferred TV settings",
+        ["get_user_context", "UpdateDevice"],
+        [],
+        ["tool_selection"],
+    ),
+    # Multi-tool: query then conditionally update — must call both GetDeviceState and UpdateDevice
+    (
+        "h1",
+        "Check if the kitchen light is off and turn it on if it is",
+        ["GetDeviceState", "UpdateDevice"],
+        [],
+        ["tool_selection"],
+    ),
+    (
+        "h3",
+        "Is the bedroom air purifier on? If not, turn it on.",
+        ["GetDeviceState", "UpdateDevice"],
+        [],
+        ["tool_selection"],
+    ),
+    # Multi-tool: personalized update — must call get_user_context and UpdateDevice
+    (
+        "h2",
+        "Set up the living room using my preferred settings",
+        ["get_user_context", "UpdateDevice"],
+        [],
+        ["tool_selection"],
+    ),
+    (
+        "h3",
+        "Apply my bedtime routine",
+        ["get_user_context", "UpdateDevice"],
+        [],
+        ["tool_selection"],
+    ),
+    # Multi-tool: query multiple devices — GetDeviceState called more than once
+    (
+        "h3",
+        "What is the state of the bedroom light and the living room TV?",
+        [],  # the agent has access to the home state so it doesn't need to call GetDeviceState
+        ["UpdateDevice", "get_user_context"],
+        ["tool_selection"],
+    ),
+    # Multi-tool: personalized query + update — all three tools
+    (
+        "h3",
+        "Based on my preferences, adjust the living room for movie night",
+        ["get_user_context", "GetDeviceState", "UpdateDevice"],
+        [],
+        ["tool_selection"],
+    ),
+]
+
+
 agent_completion_datasets = [
     direct_commands_dataset,
     intent_resolution_dataset,
