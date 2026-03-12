@@ -31,9 +31,9 @@ tool_selection_dataset_opik.insert(items)
 async def run_agent(
     home_template: str,
     command: str,
-    user_name: str = "Alice",
-    user_id: str = "alice-123",
-    thread_id: str = "test-thread",
+    user_name: str = "eval-user-01",
+    user_id: str = "eval-user-01",
+    thread_id: str = "eval-thread-01",
 ) -> dict:
     with open(f"./data/home_templates/{home_template}.json") as f:
         initial_home_state = json.load(f)["devices"]
