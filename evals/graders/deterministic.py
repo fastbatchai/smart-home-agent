@@ -16,7 +16,7 @@ class DeviceStateCorrectness(base_metric.BaseMetric):
     Partial credit is given if the agent partially matches the expected state in multi-step tasks (e.g., command chaining)
     """
 
-    def __init__(self, name="device_state_correctness"):
+    def __init__(self, name="det:device_state_correctness"):
         super().__init__(name=name)
 
     def score(self, output, expected_output, home_state=None, **kwargs):

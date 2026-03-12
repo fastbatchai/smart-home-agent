@@ -13,7 +13,7 @@ class EvalTask:
     task_fn: callable
     metrics: list
 
-    def run(self, client: Opik) -> None:
+    def run(self, client: Opik, n_trials: int = 1) -> None:
         dataset = client.get_or_create_dataset(self.dataset_name)
         dataset.insert(self.dataset_items)
         evaluate(
@@ -21,4 +21,5 @@ class EvalTask:
             dataset=dataset,
             task=self.task_fn,
             scoring_metrics=self.metrics,
+            trial_count=n_trials,
         )
