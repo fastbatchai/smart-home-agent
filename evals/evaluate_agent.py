@@ -2,6 +2,7 @@ import asyncio
 import json
 
 from datasets import agent_completion_datasets
+from langchain_core.messages import AIMessage
 from opik import Opik, track
 from opik.evaluation import evaluate
 from opik.evaluation.metrics import base_metric, score_result
@@ -53,19 +54,29 @@ async def run_agent(
     return await agent_graph.ainvoke(state, config=configuration)
 
 
+def get_last_ai_response(result: dict) -> str:
+    """Return the content of the final AIMessage (non-tool-call) in the conversation."""
+    for message in reversed(result["messages"]):
+        if isinstance(message, AIMessage) and not getattr(message, "tool_calls", None):
+            return message.content
+    return ""
+
+
 def evaluation_task(dataset_item):
     try:
         user_message_content = dataset_item["input"][0]
         home_template = dataset_item["input"][1]
         expected_home_state = json.loads(dataset_item["expected_output"])
 
-        # This is where you call your agent with the input message and get the real execution results.
         result = asyncio.run(run_agent(home_template, user_message_content))
         home_state = result["home_state"]
+        agent_response = get_last_ai_response(result)
+
         return {
             "input": user_message_content,
-            "output": home_state,
-            "expected_output": expected_home_state,
+            "output": agent_response,
+            "expected_output": json.dumps(expected_home_state),
+            "home_state": home_state,
         }
 
     except Exception as e:
@@ -77,25 +88,49 @@ def evaluation_task(dataset_item):
 
 
 class AgentCompletionQuality(base_metric.BaseMetric):
+    """Partial credit: ratio of expected device params set correctly."""
+
     def __init__(self, name: str = "agent_completion_quality"):
         self.name = name
 
-    def score(self, output, expected_output, **kwargs):
+    def score(self, output, expected_output, home_state=None, **kwargs):
         try:
-            for room, devices in expected_output.items():
+            actual = home_state if home_state is not None else {}
+            expected = (
+                json.loads(expected_output)
+                if isinstance(expected_output, str)
+                else expected_output
+            )
+
+            total, correct, wrong = 0, 0, []
+            for room, devices in expected.items():
                 for device, params in devices.items():
                     for param, expected_value in params.items():
-                        if output[room][device][param] != expected_value:
-                            return score_result.ScoreResult(
-                                name=self.name,
-                                value=0,
-                                reason=f"Wrong value. Expected {expected_value} for {room}.{device}.{param}, got {output[room][device][param]}",
-                            )
+                        total += 1
+                        try:
+                            actual_value = actual[room][device][param]
+                            if actual_value == expected_value:
+                                correct += 1
+                            else:
+                                wrong.append(
+                                    f"{room}.{device}.{param}: expected {expected_value}, got {actual_value}"
+                                )
+                        except KeyError:
+                            wrong.append(f"{room}.{device}.{param}: missing in output")
 
+            if total == 0:
+                return score_result.ScoreResult(
+                    name=self.name, value=0, reason="No expected params to check."
+                )
+
+            score_val = round(correct / total, 2)
+            reason = (
+                "All params correct."
+                if not wrong
+                else f"{correct}/{total} correct. Wrong: {wrong}"
+            )
             return score_result.ScoreResult(
-                name=self.name,
-                value=1,
-                reason="The agent completed the task correctly",
+                name=self.name, value=score_val, reason=reason
             )
         except Exception as e:
             return score_result.ScoreResult(
