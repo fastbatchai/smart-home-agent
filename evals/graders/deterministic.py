@@ -10,6 +10,94 @@ def _parse_expected(expected_output):
     return expected_output
 
 
+class ToolSelectionQuality(base_metric.BaseMetric):
+    def __init__(self, name="det:tool_selection_quality"):
+        super().__init__(name=name)
+
+    def score(self, output, expected_output, forbidden_tools=None, **kwargs):
+        called_tools = list(output) if output else []
+        required_tools = list(expected_output) if expected_output else []
+        forbidden = list(forbidden_tools) if forbidden_tools else []
+
+        for tool in called_tools:
+            if tool in forbidden:
+                return ScoreResult(name=self.name, value=0.0, reason=f"Forbidden tool called: {tool}")
+
+        remaining_required = list(required_tools)
+        for tool in called_tools:
+            if tool in remaining_required:
+                remaining_required.remove(tool)
+
+        if remaining_required:
+            return ScoreResult(name=self.name, value=0.0, reason=f"Missing required tools: {remaining_required}")
+
+        return ScoreResult(name=self.name, value=1.0, reason="All required tools called and no forbidden tools used")
+
+
+class AgentPlanEfficiency(base_metric.BaseMetric):
+    def __init__(self, name="det:agent_plan_efficiency"):
+        super().__init__(name=name)
+
+    def score(self, output, expected_output, **kwargs):
+        called_tools = list(output) if output else []
+        optimal_tools = list(expected_output) if expected_output else []
+
+        actual_count = len(called_tools)
+        optimal_count = len(optimal_tools)
+
+        if actual_count == 0:
+            return ScoreResult(name=self.name, value=0.0, reason="No tools called")
+
+        it = iter(called_tools)
+        is_subsequence = all(tool in it for tool in optimal_tools)
+
+        if not is_subsequence:
+            return ScoreResult(name=self.name, value=0.0, reason=f"Wrong order or missing tools. Called: {called_tools}, Expected: {optimal_tools}")
+
+        if actual_count == optimal_count:
+            return ScoreResult(name=self.name, value=1.0, reason=f"Correct order and count: {called_tools}")
+
+        score = optimal_count / actual_count
+        return ScoreResult(name=self.name, value=score, reason=f"Correct order but extra calls. Optimal: {optimal_count}, Actual: {actual_count}")
+
+
+class MemoryRetrievalQuality(base_metric.BaseMetric):
+    def __init__(self, name="det:memory_retrieval_quality"):
+        super().__init__(name=name)
+
+    def score(self, output, expected_output, **kwargs):
+        context = output or ""
+        keywords = list(expected_output) if expected_output else []
+
+        if not keywords:
+            return ScoreResult(name=self.name, value=1.0, reason="No keywords to check")
+
+        missing = [kw for kw in keywords if kw.lower() not in context.lower()]
+        if not missing:
+            return ScoreResult(name=self.name, value=1.0, reason=f"All {len(keywords)} keywords found")
+        return ScoreResult(name=self.name, value=0.0, reason=f"Missing keywords: {missing}")
+
+
+class MemoryRetrievalCoverage(base_metric.BaseMetric):
+    def __init__(self, name="det:memory_retrieval_coverage"):
+        super().__init__(name=name)
+
+    def score(self, output, expected_output, **kwargs):
+        context = output or ""
+        keywords = list(expected_output) if expected_output else []
+
+        if not keywords:
+            return ScoreResult(name=self.name, value=1.0, reason="No keywords to check")
+
+        found = [kw for kw in keywords if kw.lower() in context.lower()]
+        missing = [kw for kw in keywords if kw.lower() not in context.lower()]
+        ratio = len(found) / len(keywords)
+        reason = f"{len(found)}/{len(keywords)} keywords found"
+        if missing:
+            reason += f". Missing: {missing}"
+        return ScoreResult(name=self.name, value=ratio, reason=reason)
+
+
 class DeviceStateCorrectness(base_metric.BaseMetric):
     """Scores the correctness of the final home state after the agent run.
     Scores 1.0 if all params match, 0.0 if none match

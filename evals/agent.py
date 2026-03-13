@@ -87,20 +87,6 @@ def extract_called_tools(result):
     return tools
 
 
-def extract_n_turns(result) -> int:
-    """Number of LLM calls (AIMessages) in the conversation."""
-    return sum(1 for m in result["messages"] if isinstance(m, AIMessage))
-
-
-def extract_n_tool_calls(result) -> int:
-    """Total number of individual tool calls made."""
-    return sum(
-        len(m.tool_calls)
-        for m in result["messages"]
-        if isinstance(m, AIMessage) and getattr(m, "tool_calls", None)
-    )
-
-
 def extract_memory_context(result):
     contexts = []
     for message in result["messages"]:

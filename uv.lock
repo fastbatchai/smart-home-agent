@@ -1715,6 +1715,15 @@ wheels = [
 ]
 
 [[package]]
+name = "pass-at-k"
+version = "0.0.2"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/4d/57/f468c8104ac8780f7be659d3c9557eaa3c7b722d553a09566fcda95aebe4/pass_at_k-0.0.2.tar.gz", hash = "sha256:3a3b08389837b182753324fbb763ba16e93df0151cb000f4670f73c77f1fb62c", size = 5988, upload-time = "2024-06-03T22:13:21.619Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/55/87/d316a47ce6f4864bda637a85ed9b485c2d972489ed346f4daa99a7926192/pass_at_k-0.0.2-py3-none-any.whl", hash = "sha256:1b8c13320404bd7fda0c4144688da0eed0a2ff87b7f34da4197afc804a4861de", size = 4310, upload-time = "2024-06-03T22:13:20.449Z" },
+]
+
+[[package]]
 name = "pluggy"
 version = "1.6.0"
 source = { registry = "https://pypi.org/simple" }
@@ -2533,6 +2542,7 @@ dependencies = [
     { name = "langgraph-checkpoint-redis" },
     { name = "mem0ai" },
     { name = "opik" },
+    { name = "pass-at-k" },
     { name = "rich" },
     { name = "uvicorn" },
 ]
@@ -2560,6 +2570,7 @@ requires-dist = [
     { name = "langgraph-checkpoint-redis", specifier = ">=0.1.0" },
     { name = "mem0ai", specifier = ">=0.1.115,<0.2.0" },
     { name = "opik", specifier = ">=1.8.9,<2.0.0" },
+    { name = "pass-at-k", specifier = ">=0.0.2" },
     { name = "rich", specifier = ">=13.7.0" },
     { name = "uvicorn", specifier = ">=0.35.0,<0.36.0" },
 ]
