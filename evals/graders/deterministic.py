@@ -67,15 +67,28 @@ class MemoryRetrievalQuality(base_metric.BaseMetric):
 
     def score(self, output, expected_output, **kwargs):
         context = output or ""
-        keywords = list(expected_output) if expected_output else []
+        keywords = [kw.lower() for kw in (expected_output or [])]
 
         if not keywords:
             return ScoreResult(name=self.name, value=1.0, reason="No keywords to check")
 
-        missing = [kw for kw in keywords if kw.lower() not in context.lower()]
-        if not missing:
-            return ScoreResult(name=self.name, value=1.0, reason=f"All {len(keywords)} keywords found")
-        return ScoreResult(name=self.name, value=0.0, reason=f"Missing keywords: {missing}")
+        # Parse individual retrieved memories (lines starting with "- ")
+        retrieved = [line[2:].lower() for line in context.splitlines() if line.startswith("- ")]
+
+        recall = sum(1 for kw in keywords if any(kw in line for line in retrieved)) / len(keywords)
+
+        if not retrieved:
+            return ScoreResult(name=self.name, value=0.0, reason="No memories retrieved")
+
+        relevant = sum(1 for line in retrieved if any(kw in line for kw in keywords))
+        precision = relevant / len(retrieved)
+
+        f1 = 2 * (precision * recall) / (precision + recall) if (precision + recall) > 0 else 0.0
+        return ScoreResult(
+            name=self.name,
+            value=round(f1, 3),
+            reason=f"F1={f1:.2f} (recall={recall:.2f}, precision={precision:.2f}, {relevant}/{len(retrieved)} retrieved memories relevant)",
+        )
 
 
 class MemoryRetrievalCoverage(base_metric.BaseMetric):
