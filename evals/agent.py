@@ -58,16 +58,19 @@ def run_agent(
     if thread_id is None:
         thread_id = str(uuid.uuid4())
 
-    # make sure that the long-term memory is cleared
-    cleanup_memories(user_id)
-
     # initialize the home state
     # In prod env, this should be replaced with a call to the Device Service API
     initial_home_state = initialize_home_state(home_template)
 
-    return asyncio.run(
+    result = asyncio.run(
         _run_agent_async(initial_home_state, command, user_id, user_name, thread_id)
     )
+
+    # Clean up long-term memory after the run for isolation.
+    # TODO: For multi-turn evaluation, this should be skipped between turns and only called at the end of the session.
+    # cleanup_memories(user_id)
+
+    return result
 
 
 def get_last_ai_response(result):

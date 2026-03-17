@@ -3,7 +3,6 @@ import uuid
 
 from datasets import memory_retrieval_dataset
 from graders.deterministic import MemoryRetrievalCoverage, MemoryRetrievalQuality
-from metrics import make_pass_all_k, make_pass_at_k
 
 from agent import extract_memory_context, run_agent
 from src.memory import long_term_memory
@@ -11,11 +10,8 @@ from tasks.base import EvalTask
 
 
 def seed_memories(user_id, memories):
-    for memory in memories:
-        long_term_memory.add(
-            messages=[{"role": "user", "content": memory}],
-            user_id=user_id,
-        )
+    messages = [{"role": "user", "content": memory} for memory in memories]
+    long_term_memory.add(messages=messages, user_id=user_id)
 
 
 def cleanup_memories(user_id):
@@ -47,11 +43,9 @@ def task_fn(dataset_item):
         # Unique user_id per trial call — complete Mem0 isolation across Opik trials
         trial_user_id = f"{base_user_id}-{uuid.uuid4().hex[:6]}"
         seed_memories(trial_user_id, seeded_memories)
-        try:
-            result = run_agent(home_template, command, user_id=trial_user_id)
-            memory_context = extract_memory_context(result)
-        finally:
-            cleanup_memories(trial_user_id)
+        # try:
+        result = run_agent(home_template, command, user_id=trial_user_id)
+        memory_context = extract_memory_context(result)
 
         return {
             "input": command,
@@ -69,9 +63,4 @@ task = EvalTask(
     dataset_items=build_items(),
     task_fn=task_fn,
     metrics=[MemoryRetrievalQuality(), MemoryRetrievalCoverage()],
-    # @TODO: improve how k is passed
-    experiment_scoring_functions=[
-        make_pass_at_k(k=1, metric_name=MemoryRetrievalQuality().name),
-        make_pass_all_k(k=2, metric_name=MemoryRetrievalQuality().name),
-    ],
 )
