@@ -8,16 +8,11 @@ from datasets import (
 )
 from graders.deterministic import DeviceStateCorrectness
 from graders.model_based import intent_relevance_grader
-from metrics import make_pass_all_k, make_pass_at_k
 
 from agent import get_last_ai_response, run_agent
 from tasks.base import EvalTask
 
 _METRICS = [DeviceStateCorrectness()]
-_EXPERIMENT_SCORING_FUNCTIONS = [
-    make_pass_at_k(k=1, metric_name=DeviceStateCorrectness().name),
-    make_pass_all_k(k=2, metric_name=DeviceStateCorrectness().name),
-]
 
 
 def _build_items(dataset):
@@ -56,8 +51,6 @@ direct_commands_task = EvalTask(
     dataset_items=_build_items(direct_commands_dataset),
     task_fn=task_fn,
     metrics=_METRICS,
-    # @TODO: improve how k is passed
-    experiment_scoring_functions=_EXPERIMENT_SCORING_FUNCTIONS,
 )
 
 device_resolution_task = EvalTask(
@@ -67,8 +60,6 @@ device_resolution_task = EvalTask(
     dataset_items=_build_items(device_resolution_dataset),
     task_fn=task_fn,
     metrics=_METRICS,
-    # @TODO: improve how k is passed
-    experiment_scoring_functions=_EXPERIMENT_SCORING_FUNCTIONS,
 )
 
 command_chaining_task = EvalTask(
@@ -78,8 +69,6 @@ command_chaining_task = EvalTask(
     dataset_items=_build_items(command_chaining_dataset),
     task_fn=task_fn,
     metrics=_METRICS,
-    # @TODO: improve how k is passed
-    experiment_scoring_functions=_EXPERIMENT_SCORING_FUNCTIONS,
 )
 
 
@@ -90,6 +79,4 @@ intent_resolution_task = EvalTask(
     dataset_items=_build_items(intent_resolution_dataset),
     task_fn=task_fn,
     metrics=[DeviceStateCorrectness(), intent_relevance_grader],
-    # @TODO: improve how k is passed
-    experiment_scoring_functions=_EXPERIMENT_SCORING_FUNCTIONS,
 )

@@ -1,9 +1,8 @@
 import json
 
 from datasets import tool_selection_dataset
-from graders.deterministic import ToolSelectionQuality, AgentPlanEfficiency
+from graders.deterministic import AgentPlanEfficiency, ToolSelectionQuality
 from graders.model_based import tool_appropriateness_grader
-from metrics import make_pass_all_k, make_pass_at_k
 
 from agent import extract_called_tools, run_agent
 from tasks.base import EvalTask
@@ -47,10 +46,9 @@ task = EvalTask(
     dataset_name="tool_selection_dataset",
     dataset_items=build_items(),
     task_fn=task_fn,
-    metrics=[ToolSelectionQuality(), AgentPlanEfficiency(), tool_appropriateness_grader],
-    # @TODO: improve how k is passed
-    experiment_scoring_functions=[
-        make_pass_at_k(k=1, metric_name=ToolSelectionQuality().name),
-        make_pass_all_k(k=2, metric_name=ToolSelectionQuality().name),
+    metrics=[
+        ToolSelectionQuality(),
+        AgentPlanEfficiency(),
+        tool_appropriateness_grader,
     ],
 )
