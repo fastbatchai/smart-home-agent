@@ -1,0 +1,106 @@
+{
+  "devices": {
+    "kitchen": {
+      "light": {
+        "state": 0,
+        "brightness": 100,
+        "color": "white"
+      },
+      "dishwasher": {
+        "state": 0,
+        "cycle": "normal",
+        "timer": 0
+      }
+    },
+    "dining": {
+      "light": {
+        "state": 0,
+        "brightness": 100,
+        "color": "white"
+      },
+      "lamp": {
+        "state": 0,
+        "brightness": 100,
+        "color": "warm_white"
+      }
+    },
+    "living_room": {
+      "light": {
+        "state": 1,
+        "brightness": 60,
+        "color": "white"
+      },
+    "lamp": {
+        "state": 0,
+        "brightness": 100,
+        "color": "white"
+      },
+      "tv": {
+        "state": 0,
+        "volume": 25,
+        "channel": 1
+      },
+      "sound_system": {
+        "state": 0,
+        "volume": 30,
+        "input": "bluetooth"
+      },
+     "thermostat": {
+            "state": 1,
+            "temperature": 70,
+            "mode": "heat"
+        },
+    "blinds": {
+        "position": 0
+    }
+    },
+    "bedroom": {
+      "light": {
+        "state": 1,
+        "brightness": 80,
+        "color": "warm_white"
+      },
+      "lamp": {
+        "state": 0,
+        "brightness": 100,
+        "color": "yellow"
+      },
+      "air_purifier": {
+        "state": 0,
+        "fan_speed": 1,
+        "filter_life": 75
+      }
+    },
+    "hall": {
+      "light": {
+        "state": 0,
+        "brightness": 100,
+        "color": "white"
+      }
+    },
+    "entry": {
+      "light": {
+        "state": 0,
+        "brightness": 100,
+        "color": "white"
+      },
+      "security_camera": {
+        "state": 1,
+        "recording": false,
+        "motion_detection": true
+      },
+      "smart_lock": {
+        "state": 1,
+        "locked": true,
+        "battery": 92
+      }
+    },
+    "bath": {
+      "light": {
+        "state": 1,
+        "brightness": 100,
+        "color": "white"
+      }
+    }
+  }
+}

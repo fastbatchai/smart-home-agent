@@ -14,7 +14,12 @@ def get_user_context(query: str, state: Annotated[dict, InjectedState]) -> str:
     """
 
     # Retrieve relevant memories
-    memories = long_term_memory.search(query=query, user_id=state["user_id"])
+    # OSS Memory returns {"results": [...]} while MemoryClient returns a list directly
+    raw = long_term_memory.search(query=query, user_id=state["user_id"])
+    memories = raw.get("results", raw) if isinstance(raw, dict) else raw
+
+    if not memories:
+        return "No relevant information found in previous conversations."
 
     context = "Relevant information from previous conversations:\n"
     for memory in memories:

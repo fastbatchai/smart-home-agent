@@ -1,0 +1,68 @@
+{
+  "devices": {
+    "kitchen": {
+      "light": {
+        "state": 0,
+        "brightness": 100,
+        "color": "white"
+      }
+    },
+    "dining": {
+      "light": {
+        "state": 0,
+        "brightness": 100,
+        "color": "white"
+      }
+    },
+    "living_room": {
+      "light": {
+        "state": 1,
+        "brightness": 50,
+        "color": "white"
+      },
+      "lamp": {
+        "state": 0,
+        "brightness": 100,
+        "color": "white"
+      },
+      "tv": {
+        "state": 0,
+        "volume": 30,
+        "channel": 1
+      },
+      "thermostat": {
+        "state": 1,
+        "temperature": 72,
+        "mode": "auto"
+      }
+    },
+    "bedroom": {
+      "light": {
+        "state": 1,
+        "brightness": 100,
+        "color": "yellow"
+      }
+    },
+    "hall": {
+      "light": {
+        "state": 0,
+        "brightness": 100,
+        "color": "yellow"
+      }
+    },
+    "entry": {
+      "light": {
+        "state": 0,
+        "brightness": 100,
+        "color": "yellow"
+      }
+    },
+    "bath": {
+      "light": {
+        "state": 1,
+        "brightness": 100,
+        "color": "white"
+      }
+    }
+  }
+}

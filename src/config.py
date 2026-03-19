@@ -24,10 +24,12 @@ class Config(BaseSettings):
     # --------------------------------#
     # Memory Configuration          #
     # --------------------------------#
-    MEM0_API_KEY: str
-    MEM0_ORG_ID: str
-    MEM0_PROJECT_ID: str
+    MEM0_API_KEY: str = ""
+    MEM0_ORG_ID: str = ""
+    MEM0_PROJECT_ID: str = ""
+    MEM0_PROVIDER: str = "cloud"  # "cloud" or "oss"
     SKIP_MEMORY: bool = False
+    TEST_MODE: bool = False
 
     SESSION_WINDOW_SECONDS: int = 600  # 10 minutes
     REDIS_DB_URI: str
