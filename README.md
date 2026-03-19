@@ -74,8 +74,8 @@ This **open-source series consists of 8 modules**. This course is still under-de
 0 | [Introduction](https://fastbatch.substack.com/p/lets-build-a-smart-home-agent-together)| Series announcement | - |
 1 | [Build your smart home agent](https://fastbatch.substack.com/p/build-a-smart-home-agent) | Implement a simple agent that controls devices | [Demo](https://github.com/fastbatchai/smart-home-agent/blob/lesson-1/demo.py) |
 2 | [Personnalize your agent](https://fastbatch.substack.com/p/teaching-your-agent-to-remember) | Add a memory layer to personnalize your agent's response | [Demo](https://github.com/fastbatchai/smart-home-agent/blob/lesson-2/scripts/demo.py)
-3 | [Deploy your agent]() | Design the deployment architecture | -
-4 | [Evaluate your agent]() | Evaluate if your agent if ready for production | -
+3 | [Deploy your agent](https://fastbatch.substack.com/p/from-prototype-to-production-i-deploying) | Design the deployment architecture | [Demo](https://github.com/fastbatchai/smart-home-agent/blob/lesson-3)
+4 | [Evaluate your agent](https://fastbatch.substack.com/p/how-to-know-if-your-ai-agent-actually) | Evaluate if your agent if ready for production | [Demo](https://github.com/fastbatchai/smart-home-agent/blob/lesson-4)
 5 | [Red team your agent]() | Evaluate your agent's robustness against attacks | -
 6 | [Secure your agent]() | Implement safety guardrails | - |
 7 | [Monitor your agent]() | Add observability and monitoring pipelines | - |
