@@ -68,7 +68,7 @@ def run_agent(
 
     # Clean up long-term memory after the run for isolation.
     # TODO: For multi-turn evaluation, this should be skipped between turns and only called at the end of the session.
-    # cleanup_memories(user_id)
+    cleanup_memories(user_id)
 
     return result
 
